@@ -6,8 +6,8 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +38,8 @@ public class RESTResourceTest {
                             .withStatus(200)));
     }
 
-    @After
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown() {
 
         wireMockServer.stop();
     }
