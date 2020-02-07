@@ -12,7 +12,7 @@ public class ApiResourceTest {
     @Test
     public void testOrderInEvent() {
         given()
-          .when().get("/api/orders")
+          .when().get("/apijson/orderInEvent")
           .then()
              .statusCode(200);
     }
