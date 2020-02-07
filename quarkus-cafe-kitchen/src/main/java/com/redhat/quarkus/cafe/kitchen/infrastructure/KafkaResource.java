@@ -77,7 +77,7 @@ public class KafkaResource {
 //    @Outgoing("kitchen-orders-up")
     private CompletionStage<OrderEvent> onKitchenOrderIn(final OrderEvent orderEvent) {
 
-        return kitchen.orderIn(orderEvent);
+        return kitchen.make(orderEvent);
     }
 
     private void updateKafka(final OrderEvent orderEvent) {

@@ -1,8 +1,11 @@
 package com.redhat.quarkus.cafe.kitchen.domain;
 
+import com.redhat.quarkus.cafe.kitchen.infrastructure.RESTClient;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -12,7 +15,18 @@ public class Kitchen {
 
     static final Logger logger = Logger.getLogger(Kitchen.class.getName());
 
-    public CompletionStage<OrderEvent> orderIn(OrderEvent orderIn) {
+    @Inject
+    @RestClient
+    RESTClient restClient;
+
+    public void orderIn(OrderEvent orderInEvent) {
+
+        make(orderInEvent).thenAccept(o -> {
+            restClient.orderUp(o);
+        });
+    }
+
+    public CompletionStage<OrderEvent> make(OrderEvent orderIn) {
 
         logger.info("Received order: " + orderIn.toString());
         logger.info("Sending order at " + Instant.now().toString() + " " + orderIn.toString());

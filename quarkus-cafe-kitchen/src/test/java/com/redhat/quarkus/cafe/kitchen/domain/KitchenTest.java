@@ -38,7 +38,7 @@ public class KitchenTest {
 
         OrderEvent orderIn = new OrderEvent(UUID.randomUUID().toString(), "Moe", Item.PANINI, UUID.randomUUID().toString(), EventType.KITCHEN_ORDER_IN);
 
-        kitchen.orderIn(orderIn).thenAccept(result -> {
+        kitchen.make(orderIn).thenAccept(result -> {
 
             assertEquals(EventType.KITCHEN_ORDER_UP, result.eventType);
         });
