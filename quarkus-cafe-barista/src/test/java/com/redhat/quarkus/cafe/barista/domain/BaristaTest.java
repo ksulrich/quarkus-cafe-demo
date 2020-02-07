@@ -21,7 +21,7 @@ public class BaristaTest {
     public void testBlackCoffeeOrder() throws ExecutionException, InterruptedException {
 
         BeverageOrder beverageOrder = new BeverageOrder(EventType.BEVERAGE_ORDER_IN, UUID.randomUUID().toString(), UUID.randomUUID().toString(), "Jeremy", Item.COFFEE_BLACK);
-        barista.orderIn(beverageOrder).thenAccept(result -> {
+        barista.make(beverageOrder).thenAccept(result -> {
             assertEquals(result, Status.READY);
         });
     }
@@ -30,7 +30,7 @@ public class BaristaTest {
     public void testLatteOrder() throws ExecutionException, InterruptedException {
 
         BeverageOrder beverageOrder = new BeverageOrder(EventType.BEVERAGE_ORDER_IN, UUID.randomUUID().toString(), UUID.randomUUID().toString(), "Jeremy", Item.LATTE);
-        barista.orderIn(beverageOrder).thenAccept(result -> {
+        barista.make(beverageOrder).thenAccept(result -> {
             assertEquals(result, Status.READY);
         });
     }

@@ -1,8 +1,11 @@
 package com.redhat.quarkus.cafe.barista.domain;
 
+import com.redhat.quarkus.cafe.barista.infrastructure.CafeClient;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -11,7 +14,18 @@ public class Barista {
 
     Logger logger = Logger.getLogger(Barista.class);
 
-    public CompletionStage<BeverageOrder> orderIn(BeverageOrder beverageOrder) {
+    @Inject
+    @RestClient
+    CafeClient cafeClient;
+
+    public void orderIn(BeverageOrder beverageOrder) {
+
+        make(beverageOrder).thenAccept(o -> {
+            cafeClient.orderUp(o);
+        });
+    }
+
+    public CompletionStage<BeverageOrder> make(BeverageOrder beverageOrder) {
 
         logger.debug("orderIn: " + beverageOrder.toString());
 
