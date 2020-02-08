@@ -1,6 +1,6 @@
 package com.redhat.quarkus.cafe.domain;
 
-import com.redhat.quarkus.cafe.infrastructure.BaristaService;
+import com.redhat.quarkus.cafe.infrastructure.OrdersService;
 import com.redhat.quarkus.cafe.infrastructure.DashboardService;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class Cafe {
 
     @Inject
-    BaristaService baristaService;
+    OrdersService ordersService;
 
     @Inject
     @RestClient
@@ -40,7 +40,7 @@ public class Cafe {
         System.out.println("\n" + allEvents.size() + "\n");
 
         CompletableFuture.runAsync(() -> {
-            baristaService.updateOrders(allEvents);
+            ordersService.updateOrders(allEvents);
         }).thenRun(() -> { dashboardService.updatedDashboard(convertJson(allEvents));})
                 .get();
         return allEvents;
