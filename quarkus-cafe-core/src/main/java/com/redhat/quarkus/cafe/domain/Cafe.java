@@ -1,7 +1,7 @@
 package com.redhat.quarkus.cafe.domain;
 
+import com.redhat.quarkus.cafe.infrastructure.BaristaService;
 import com.redhat.quarkus.cafe.infrastructure.DashboardService;
-import com.redhat.quarkus.cafe.infrastructure.KafkaService;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class Cafe {
 
     @Inject
-    KafkaService kafkaService;
+    BaristaService baristaService;
 
     @Inject
     @RestClient
@@ -38,8 +37,10 @@ public class Cafe {
             allEvents.addAll(createOrderCommand.kitchenOrders.get().stream().map(f -> new KitchenOrderInEvent(createOrderCommand.id, f.name, f.item)).collect(Collectors.toList()));
         });
 
+        System.out.println("\n" + allEvents.size() + "\n");
+
         CompletableFuture.runAsync(() -> {
-            kafkaService.updateOrders(allEvents);
+            baristaService.updateOrders(allEvents);
         }).thenRun(() -> { dashboardService.updatedDashboard(convertJson(allEvents));})
                 .get();
         return allEvents;
