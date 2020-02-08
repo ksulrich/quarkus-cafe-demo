@@ -32,7 +32,7 @@ public class OrdersService {
 
         CompletableFuture<List<OrderEvent>> retVal = new CompletableFuture<>();
 
-        final CountDownLatch latch = new CountDownLatch(2);
+        final CountDownLatch latch = new CountDownLatch(orders.size());
         final AtomicReference<Throwable> throwable = new AtomicReference<>();
 
         BiConsumer<OrderEvent, Throwable> consumer = (e, t) -> {
@@ -49,7 +49,7 @@ public class OrdersService {
                 kitchenRESTClient.orderIn(o).whenCompleteAsync(consumer);
             } else if (o.eventType.equals(EventType.BEVERAGE_ORDER_IN)) {
                 logger.debug("sending to barista");
-//                baristaRESTClient.orderIn(o).whenCompleteAsync(consumer);
+                baristaRESTClient.orderIn(o).whenCompleteAsync(consumer);
             }
         });
 
