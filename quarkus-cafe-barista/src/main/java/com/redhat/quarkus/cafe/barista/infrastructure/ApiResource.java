@@ -24,6 +24,7 @@ public class ApiResource {
     public Response orderIn(BeverageOrder orderInEvent) {
 
 //        barista.orderIn(orderInEvent);
-        return Response.ok().build();
+        System.out.println("Barista order in :" + orderInEvent.toString());
+        return Response.accepted().entity(orderInEvent).build();
     }
 }

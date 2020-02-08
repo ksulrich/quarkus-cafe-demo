@@ -8,6 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.concurrent.CompletionStage;
 
 @Path("/api/orders")
 @RegisterRestClient
@@ -16,5 +17,5 @@ public interface BaristaRESTClient {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response orderIn(OrderEvent orderEvent);
+    public CompletionStage<OrderEvent> orderIn(OrderEvent orderEvent);
 }

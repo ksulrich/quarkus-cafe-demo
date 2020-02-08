@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 @Path("/update")
 @RegisterRestClient
@@ -18,7 +20,7 @@ public interface DashboardService {
 
 
     @POST
-    public void updatedDashboard(List<DashboardUpdate> dashboardUpdate);
+    public CompletionStage<Void> updatedDashboard(List<DashboardUpdate> dashboardUpdate);
 
 
 

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -27,7 +28,7 @@ public class Cafe {
     Jsonb jsonb = JsonbBuilder.create();
 
     //TODO Create and persist an Order
-    public List<OrderEvent> orderIn(CreateOrderCommand createOrderCommand) throws ExecutionException, InterruptedException {
+    public void orderIn(CreateOrderCommand createOrderCommand) throws ExecutionException, InterruptedException {
 
         List<OrderEvent> allEvents = new ArrayList<>();
         createOrderCommand.beverages.ifPresent(beverages -> {
@@ -39,17 +40,27 @@ public class Cafe {
 
         System.out.println("\n" + allEvents.size() + "\n");
 
+/*
         CompletableFuture.runAsync(() -> {
-            ordersService.updateOrders(allEvents);
-        }).thenRun(() -> { dashboardService.updatedDashboard(convertJson(allEvents));})
+            ordersService.publishBeveargeOrders(allEvents);
+        }).thenRun(() -> { //dashboardService.updatedDashboard(convertJson(allEvents));
+            System.out.println("update dashboard");})
                 .get();
-        return allEvents;
+*/
+
+        ordersService.publishBeveargeOrders(allEvents).get();
+//                .thenCompose(fn(allEvents)).get();
 /*
         return kafkaService.updateOrders(allEvents)
                 .thenApply(v -> {
             return allEvents;
         }).thenCompose(this::ordersIn);
 */
+    }
+
+    private Function fn(List<OrderEvent> events) {
+        dashboardService.updatedDashboard(convertJson(events));
+        return null;
     }
 
     private List<DashboardUpdate> convertJson(List<OrderEvent> orderEvents) {
