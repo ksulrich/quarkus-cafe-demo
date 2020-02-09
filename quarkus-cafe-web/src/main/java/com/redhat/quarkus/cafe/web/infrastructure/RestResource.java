@@ -4,6 +4,7 @@ import com.redhat.quarkus.cafe.web.domain.CreateOrderCommand;
 import com.redhat.quarkus.cafe.web.domain.DashboardUpdate;
 import io.smallrye.reactive.messaging.annotations.Channel;
 import io.smallrye.reactive.messaging.annotations.Emitter;
+import io.vertx.core.eventbus.EventBus;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.inject.Inject;
@@ -18,12 +19,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@Path("/")
+@Path("/api")
 public class RestResource {
 
     @Inject
-    @Channel("dashboard")
-    Emitter<String> udpateEmitter;
+    EventBus bus;
 
     @Inject
     @RestClient
@@ -49,8 +49,7 @@ public class RestResource {
 
         System.out.println("updates received");
         dashboardUpdates.forEach( dashboardUpdate -> {
-            System.out.println(dashboardUpdate.toString() + "\n");
-            udpateEmitter.send(jsonb.toJson(dashboardUpdate));
+            bus.<String>send("updates", jsonb.toJson(dashboardUpdate).toString());
         });
         return Response.ok().build();
     }
