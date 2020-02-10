@@ -28,7 +28,7 @@ public class OrdersService {
     @RestClient
     KitchenRESTClient kitchenRESTClient;
 
-    public CompletableFuture<List<OrderEvent>> publishBeveargeOrders(List<OrderEvent> orders) throws ExecutionException, InterruptedException {
+    public CompletableFuture<List<OrderEvent>> publishOrders(List<OrderEvent> orders) throws ExecutionException, InterruptedException {
 
         CompletableFuture<List<OrderEvent>> retVal = new CompletableFuture<>();
 

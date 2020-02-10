@@ -1,7 +1,10 @@
 package com.redhat.quarkus.cafe.domain;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.UUID;
 
+@RegisterForReflection
 public abstract class OrderInEvent implements CafeEvent{
 
     public String itemId = UUID.randomUUID().toString();

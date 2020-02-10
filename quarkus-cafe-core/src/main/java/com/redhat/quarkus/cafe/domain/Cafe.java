@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -27,8 +26,14 @@ public class Cafe {
 
     Jsonb jsonb = JsonbBuilder.create();
 
-    //TODO Create and persist an Order
+    //TODO persist an Order
     public void orderIn(CreateOrderCommand createOrderCommand) throws ExecutionException, InterruptedException {
+
+        List<OrderEvent> allEvents = createEvents(createOrderCommand);
+        processOrder(allEvents);
+    }
+
+    List<OrderEvent> createEvents(CreateOrderCommand createOrderCommand){
 
         List<OrderEvent> allEvents = new ArrayList<>();
         createOrderCommand.beverages.ifPresent(beverages -> {
@@ -37,31 +42,15 @@ public class Cafe {
         createOrderCommand.kitchenOrders.ifPresent(foods -> {
             allEvents.addAll(createOrderCommand.kitchenOrders.get().stream().map(f -> new KitchenOrderInEvent(createOrderCommand.id, f.name, f.item)).collect(Collectors.toList()));
         });
-
-        System.out.println("\n" + allEvents.size() + "\n");
-
-/*
-        CompletableFuture.runAsync(() -> {
-            ordersService.publishBeveargeOrders(allEvents);
-        }).thenRun(() -> { //dashboardService.updatedDashboard(convertJson(allEvents));
-            System.out.println("update dashboard");})
-                .get();
-*/
-
-        ordersService.publishBeveargeOrders(allEvents).get();
-//                .thenCompose(fn(allEvents)).get();
-/*
-        return kafkaService.updateOrders(allEvents)
-                .thenApply(v -> {
-            return allEvents;
-        }).thenCompose(this::ordersIn);
-*/
+        return allEvents;
     }
 
-    private Function fn(List<OrderEvent> events) {
-        dashboardService.updatedDashboard(convertJson(events));
-        return null;
-    }
+    void processOrder(List<OrderEvent> allEvents) throws ExecutionException, InterruptedException {
+
+        ordersService.publishOrders(allEvents)
+                .thenApply(this::convertJson)
+                .thenApply(this::updateDashboard).get();
+    };
 
     private List<DashboardUpdate> convertJson(List<OrderEvent> orderEvents) {
         return orderEvents.stream()
@@ -136,11 +125,10 @@ public class Cafe {
         });
     }
 
-    private CompletableFuture<Void> updateDashboard(List<OrderEvent> orderEvents) {
+    private CompletableFuture<Void> updateDashboard(List<DashboardUpdate> dashboardUpdates) {
 
         return CompletableFuture.supplyAsync(() ->{
-
-            dashboardService.updatedDashboard(convertOrderEventsToDashboardUpdates(orderEvents));
+            dashboardService.updatedDashboard(dashboardUpdates);
             return null;
         });
     }
@@ -175,7 +163,6 @@ public class Cafe {
                             status);
                 }).collect(Collectors.toList());
     }
-
 
     public void orderUp(List<OrderEvent> orderEvents) {
 
