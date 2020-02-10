@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -20,8 +21,10 @@ public interface DashboardService {
 
 
     @POST
-    public CompletionStage<Void> updatedDashboard(List<DashboardUpdate> dashboardUpdate);
+    public CompletionStage<Response> updatedDashboard(List<DashboardUpdate> dashboardUpdates);
 
+    @POST
+    public CompletionStage<Response> updatedDashboard(DashboardUpdate dashboardUpdate);
 
 
 }

@@ -1,5 +1,6 @@
 package com.redhat.quarkus.cafe.infrastructure;
 
+import com.redhat.quarkus.cafe.domain.DashboardUpdate;
 import com.redhat.quarkus.cafe.domain.EventType;
 import com.redhat.quarkus.cafe.domain.OrderEvent;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -8,12 +9,15 @@ import org.jboss.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class OrdersService {
@@ -27,6 +31,24 @@ public class OrdersService {
     @Inject
     @RestClient
     KitchenRESTClient kitchenRESTClient;
+
+    @Inject
+    @RestClient
+    DashboardService dashboardService;
+
+    public CompletableFuture<Void> publishUpdate(final DashboardUpdate dashboardUpdate) {
+
+        return dashboardService.updatedDashboard(dashboardUpdate)
+                .exceptionally(e -> {
+                    logger.error("dashboard update unsuccessfull");
+                    logger.error(e.getMessage());
+                    throw new RuntimeException(e);
+                })
+                .thenRun(() -> {
+                    logger.debug("dashboard updated successfully");
+                })
+                .toCompletableFuture();
+    }
 
     public CompletableFuture<List<OrderEvent>> publishOrders(List<OrderEvent> orders) throws ExecutionException, InterruptedException {
 
@@ -103,4 +125,6 @@ public class OrdersService {
                     t, 500);
         }
     }
+
+
 }

@@ -54,7 +54,12 @@ public class Cafe {
 
     private List<DashboardUpdate> convertJson(List<OrderEvent> orderEvents) {
         return orderEvents.stream()
-                .map(orderEvent -> {
+                .map(this::createDashboardUpdateFromEvent)
+                .collect(Collectors.toList());
+    }
+
+    private DashboardUpdate createDashboardUpdateFromEvent(OrderEvent orderEvent) {
+
             System.out.println("\nConverting: " + orderEvent.toString() +"\n");
             OrderStatus status;
             switch(orderEvent.eventType){
@@ -79,8 +84,7 @@ public class Cafe {
                     orderEvent.name,
                     orderEvent.item,
                     status);
-        }).collect(Collectors.toList());
-    }
+        }
 
     /*
         Convert the OrderEvent JSON to the JSON that the Web UI expects and call the REST endpoint
@@ -132,6 +136,7 @@ public class Cafe {
             return null;
         });
     }
+/*
 
     private List<DashboardUpdate> convertOrderEventsToDashboardUpdates(List<OrderEvent> orderEvents){
 
@@ -164,8 +169,11 @@ public class Cafe {
                 }).collect(Collectors.toList());
     }
 
-    public void orderUp(List<OrderEvent> orderEvents) {
+*/
+    public CompletableFuture<Void> orderUp(final OrderEvent orderEvent) {
 
-        dashboardService.updatedDashboard(convertOrderEventsToDashboardUpdates(orderEvents));
+
+        return ordersService.publishUpdate(createDashboardUpdateFromEvent(orderEvent))
+                .toCompletableFuture();
     }
 }

@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.redhat.quarkus.cafe.domain.CreateOrderCommand;
 import com.redhat.quarkus.cafe.domain.Item;
 import com.redhat.quarkus.cafe.domain.Order;
+import com.redhat.quarkus.cafe.domain.OrderUpEvent;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
@@ -107,5 +108,18 @@ public class ApiTest {
                 .statusCode(HttpStatus.SC_ACCEPTED);
     }
 
+    @Test
+    @Timeout(5)
+    public void testOrderUp() {
+
+        OrderUpEvent beverageOrderUpEvent = new OrderUpEvent();
+
+        given()
+                .body(jsonb.toJson(null))
+                .contentType(ContentType.JSON)
+                .when().post("/order")
+                .then()
+                .statusCode(HttpStatus.SC_ACCEPTED);
+    }
 
 }

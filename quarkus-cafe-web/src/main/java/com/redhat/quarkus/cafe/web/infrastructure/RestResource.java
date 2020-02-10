@@ -54,4 +54,13 @@ public class RestResource {
         return Response.ok().build();
     }
 
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateDashboard(DashboardUpdate dashboardUpdate) {
+
+        System.out.println("update received");
+        bus.<String>send("updates", jsonb.toJson(dashboardUpdate).toString());
+        return Response.ok().build();
+    }
 }
