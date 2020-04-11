@@ -1,11 +1,14 @@
 package com.redhat.quarkus.cafe.domain;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
 /**
  * Factory for creating Orders
  */
+@RegisterForReflection
 public class OrderFactory {
 
     public static Order createFromCreateOrderCommand(CreateOrderCommand createOrderCommand) {
