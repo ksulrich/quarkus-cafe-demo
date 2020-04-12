@@ -44,7 +44,7 @@ public class Cafe {
 
         logger.debug("order created: {}", order);
 
-//        orderRepository.persist(order);
+        orderRepository.persist(order);
         OrderCreatedEvent orderCreatedEvent = EventFactory.createFromNewOrder(order);
 
         CompletableFuture<Void> broadcast = applyEvents(orderCreatedEvent.events);
